@@ -7,19 +7,56 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ─── Worker Model ─────────────────────────────────────────────────
+// Stores registered gig workers. Extended for Phase 2.
 model Worker {
-  id        String   @id @default(uuid())
-  phone     String   @unique
-  name      String?
-  upiId     String?
-  tier      Int      @default(3)
-  createdAt DateTime @default(now())
+  id                    String   @id @default(uuid())
+  phone                 String   @unique
+  name                  String?
+  upiId                 String?
+  tier                  Int      @default(3)
+  // Phase 2 additions
+  zone                  String?  // Chennai | Mumbai | Delhi | Bengaluru | Hyderabad
+  platform              String?  // Swiggy | Zomato | Blinkit | Amazon Flex
+  weeklyEarningEstimate Float?   // Estimated weekly earnings in ₹
+  createdAt             DateTime @default(now())
+
+  // Relations
+  policies              Policy[]
+  claims                Claim[]
 }
 
+// ─── Policy Model ─────────────────────────────────────────────────
+// Insurance policies purchased by workers.
+model Policy {
+  id             String   @id @default(uuid())
+  workerId       String
+  worker         Worker   @relation(fields: [workerId], references: [id])
+  policyType     String   // Monsoon Shield | Clean Air Guard | Technical Shock | Zone Closure
+  premiumPaid    Float
+  coverageStart  DateTime
+  coverageEnd    DateTime
+  status         String   @default("active") // active | expired | cancelled
+  exclusions     String   @default("[\"war\",\"pandemic\",\"terrorism\",\"nuclear events\",\"government-declared national emergency\"]")
+  createdAt      DateTime @default(now())
+}
+
+// ─── Claim Model ──────────────────────────────────────────────────
+// Auto-triggered claims from parametric oracles.
 model Claim {
-  id        String   @id @default(uuid())
-  workerId  String
-  type      String
-  amount    Float
-  date      DateTime @default(now())
+  id            String   @id @default(uuid())
+  workerId      String
+  worker        Worker   @relation(fields: [workerId], references: [id])
+  policyType    String   // Which policy triggered
+  triggerReason String   // Human-readable reason e.g. "Rainfall 18mm/hr > 15mm threshold"
+  triggerValue  String   // Raw sensor value e.g. "18.2"
+  payoutAmount  Float
+  status        String   @default("approved") // approved | pending | rejected
+  fraudFlag     Boolean  @default(false)
+  createdAt     DateTime @default(now())
+
+  // Legacy fields (kept for backwards compatibility with existing Claim references)
+  type          String   @default("")
+  amount        Float    @default(0)
+  date          DateTime @default(now())
 }

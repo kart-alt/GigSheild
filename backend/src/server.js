@@ -18,6 +18,9 @@ app.use(express.json({ limit: '10mb' }));
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/verification', require('./routes/verification'));
 app.use('/api/admin', require('./routes/admin'));
+app.use('/api/policy', require('./routes/policy'));
+app.use('/api/premium', require('./routes/premium'));
+app.use('/api/claims', require('./routes/claims'));
 
 // Basic health check
 app.get('/', (req, res) => {

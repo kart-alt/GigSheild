@@ -1,7 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Shield, LayoutDashboard, Info, Smartphone } from 'lucide-react';
-
+import { Shield, LayoutDashboard, Info, Smartphone, UserPlus, ShieldCheck, Calculator, ClipboardList } from 'lucide-react';
 const Navigation = () => {
   return (
     <nav style={{
@@ -28,11 +27,14 @@ const Navigation = () => {
       </div>
 
       <div style={{ display: 'flex', gap: '8px' }}>
+        <NavItem to="/register" icon={<UserPlus size={18} />} label="Register" />
+        <NavItem to="/policies" icon={<ShieldCheck size={18} />} label="My Policies" />
+        <NavItem to="/premium" icon={<Calculator size={18} />} label="Premium" />
+        <NavItem to="/claims" icon={<ClipboardList size={18} />} label="Claims" />
         <NavItem to="/worker" icon={<Smartphone size={18} />} label="Worker Demo" />
         <NavItem to="/admin" icon={<LayoutDashboard size={18} />} label="Admin Dashboard" />
         <NavItem to="/info" icon={<Info size={18} />} label="System Info" />
-      </div>
-    </nav>
+      </div>    </nav>
   );
 };
 
